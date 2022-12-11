@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "displayitem",
+  "version": "${version}",
+  "name": "Displayitem",
+  "description": "Disaplay Items in a block ",
+  "authors": [
+    "MitosV",
+    "Eufonia"
+  ],
+  "contact": {},
+  "license": "All-Rights-Reserved",
+  "icon": "assets/displayitem/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "client": [
+      "com.mitosv.displayitem.client.DisplayitemClient"
+    ],
+    "main": [
+      "com.mitosv.displayitem.DisplayItem"
+    ]
+  },
+  "mixins": [
+    "displayitem.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.14.10",
+    "fabric": "*",
+    "minecraft": "1.19.2"
+  }
+}
