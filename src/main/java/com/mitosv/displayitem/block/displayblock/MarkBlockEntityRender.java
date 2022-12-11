@@ -12,6 +12,7 @@ import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
 import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.render.model.json.ModelTransformation;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3f;
@@ -33,14 +34,10 @@ public class MarkBlockEntityRender implements BlockEntityRenderer<MarkBlockEntit
     public void render(MarkBlockEntity entity, float tickDelta, MatrixStack matrices,
                        VertexConsumerProvider vertexConsumers, int light, int overlay) {
 
-        /*if (!MinecraftClient.getInstance().player
-                .getActiveItem().isItemEqual(RegisterBlocks.DISPLAY_BLOCK.asItem().getDefaultStack()))return;*/
-
         ItemRenderer itemRenderer = MinecraftClient.getInstance().getItemRenderer();
         ClientPlayerEntity player = MinecraftClient.getInstance().player;
         assert player != null;
-        if (!player.isHolding(RegisterItems.MARK_ITEM)) return;
-
+        if (!isHolding(player,RegisterItems.MARK_ITEM)) return;
         ItemStack itemStack = entity.getItem().getDefaultStack();
 
         matrices.push();
@@ -57,7 +54,11 @@ public class MarkBlockEntityRender implements BlockEntityRenderer<MarkBlockEntit
         matrices.pop();
     }
 
-
+    private static boolean isHolding(ClientPlayerEntity player, Item item){
+        if (player.getOffHandStack().isOf(item)) return true;
+        if (player.getMainHandStack().isOf(item)) return true;
+        return player.isHolding(item);
+    }
 
     private int getLightLevel(World world, BlockPos pos) {
         int bLight = world.getLightLevel(LightType.BLOCK, pos);
