@@ -1,6 +1,7 @@
 package com.mitosv.displayitem.block.displayblock;
 
 import com.mitosv.displayitem.block.RegisterBlocks;
+import com.mitosv.displayitem.block.displayblock.item.MarkItem;
 import com.mitosv.displayitem.block.displayblock.item.RegisterItems;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
@@ -14,6 +15,7 @@ import net.minecraft.client.render.model.json.ModelTransformation;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3f;
 import net.minecraft.world.LightType;
@@ -34,11 +36,14 @@ public class MarkBlockEntityRender implements BlockEntityRenderer<MarkBlockEntit
     public void render(MarkBlockEntity entity, float tickDelta, MatrixStack matrices,
                        VertexConsumerProvider vertexConsumers, int light, int overlay) {
 
+
         ItemRenderer itemRenderer = MinecraftClient.getInstance().getItemRenderer();
         ClientPlayerEntity player = MinecraftClient.getInstance().player;
+
+
         assert player != null;
-        if (!isHolding(player,RegisterItems.MARK_ITEM)) return;
         ItemStack itemStack = entity.getItem().getDefaultStack();
+        if (!isHolding(player, entity.getItem())) return;
 
         matrices.push();
         matrices.translate(entity.getTransX(), entity.getTransY(), entity.getTransZ());
@@ -55,9 +60,18 @@ public class MarkBlockEntityRender implements BlockEntityRenderer<MarkBlockEntit
     }
 
     private static boolean isHolding(ClientPlayerEntity player, Item item){
-        if (player.getOffHandStack().isOf(item)) return true;
-        if (player.getMainHandStack().isOf(item)) return true;
-        return player.isHolding(item);
+        ItemStack off = player.getOffHandStack();
+        ItemStack main = player.getMainHandStack();
+        if (off.isOf(RegisterItems.MARK_ITEM)) return sameItem(off,item);
+        if (main.isOf(RegisterItems.MARK_ITEM)) return sameItem(main,item);
+        return false;
+    }
+
+
+    private static boolean sameItem(ItemStack handItem, Item item){
+        if (!handItem.hasNbt()) return handItem.isOf(RegisterItems.MARK_ITEM);
+        if (!handItem.getNbt().contains("id"))return false;
+        return MarkBlock.getItemFromName(handItem.getNbt().getString("id")).equals(item);
     }
 
     private int getLightLevel(World world, BlockPos pos) {

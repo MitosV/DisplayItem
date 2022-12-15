@@ -7,9 +7,15 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.state.StateManager;
+import net.minecraft.state.property.DirectionProperty;
+import net.minecraft.state.property.Properties;
 import net.minecraft.text.Text;
+import net.minecraft.util.BlockMirror;
+import net.minecraft.util.BlockRotation;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
@@ -23,6 +29,8 @@ import java.util.HashMap;
 import java.util.List;
 
 public class MarkBlock extends BlockWithEntity {
+
+    public static final DirectionProperty FACING = Properties.FACING;
 
     public static HashMap<String, String> allTags = new HashMap<>() {{
        put("X","xt");put("Y","yt");put("Z","zt");
@@ -67,6 +75,17 @@ public class MarkBlock extends BlockWithEntity {
 
     }
 
+    @Override
+    public BlockState rotate(BlockState state, BlockRotation rotation) {
+        return state.with(FACING, rotation.rotate(state.get(FACING)));
+    }
+
+    @Nullable
+    @Override
+    public BlockState getPlacementState(ItemPlacementContext ctx) {
+        return this.getDefaultState().with(FACING,ctx.getPlayerLookDirection().getOpposite());
+    }
+
     public static Item getItemFromName(String fullName){
         String[] mine = fullName.replace("\"","").split(":");
         Item item = Registry.ITEM.get(new Identifier(mine[0]));
@@ -79,7 +98,8 @@ public class MarkBlock extends BlockWithEntity {
 
 
     @Override
-    public void onPlaced(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
+    public void onPlaced(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer,
+                         ItemStack itemStack) {
         super.onPlaced(world, pos, state, placer, itemStack);
         if (!itemStack.hasNbt())return;
         BlockEntity blockEntity = world.getBlockEntity(pos);
@@ -88,6 +108,7 @@ public class MarkBlock extends BlockWithEntity {
             NbtCompound nbt = itemStack.getNbt();
             Item item = getItemFromName(nbt.getString("id"));
             displayBlock.setItem(item);
+            displayBlock.setyA(state.get(FACING).asRotation());
             secureSetAllValues(displayBlock, nbt);
         }
 
@@ -112,6 +133,16 @@ public class MarkBlock extends BlockWithEntity {
         if (a[0].equals("block") || a[0].equals("item"))
             return a[1].concat(":").concat(a[2]);
         return null;
+    }
+
+    @Override
+    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
+        builder.add(FACING);
+    }
+
+    @Override
+    public BlockState mirror(BlockState state, BlockMirror mirror) {
+        return state.rotate(mirror.getRotation(state.get(FACING)));
     }
 
     @Nullable

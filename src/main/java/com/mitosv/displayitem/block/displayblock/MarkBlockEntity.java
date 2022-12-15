@@ -3,6 +3,7 @@ package com.mitosv.displayitem.block.displayblock;
 import com.mitosv.displayitem.block.RegisterBlocks;
 import com.mitosv.displayitem.block.displayblock.item.RegisterItems;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.HorizontalFacingBlock;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;

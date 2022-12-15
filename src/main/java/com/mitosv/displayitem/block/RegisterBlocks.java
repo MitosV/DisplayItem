@@ -7,8 +7,10 @@ import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.minecraft.block.Block;
+import net.minecraft.block.FurnaceBlock;
 import net.minecraft.block.Material;
 import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.block.entity.FurnaceBlockEntity;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.*;
 import net.minecraft.text.Text;
@@ -27,6 +29,7 @@ public class RegisterBlocks {
     public static final Block MARK_BLOCK = registerBlock("mark_block",
             new MarkBlock(FabricBlockSettings.of(Material.METAL).collidable(false).noCollision()
                     .strength(-1.0F, 3600000.0F).dropsNothing()));
+
 
 
     private static Block registerBlock(String name, Block block){
